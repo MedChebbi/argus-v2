@@ -1,0 +1,10 @@
+argus:
+  computer_vision:
+    ros__parameters:
+      line_detection:
+        
+
+      state_classification:
+        model_path: ""
+
+      aruco_detection:

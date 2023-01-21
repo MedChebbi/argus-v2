@@ -1,7 +1,7 @@
 from glob import glob 
 from setuptools import setup
 
-package_name = 'argus_computer_vision'
+package_name = 'argus_base'
 
 setup(
     name=package_name,
@@ -24,7 +24,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'computer_vision_main = argus_computer_vision.computer_vision:main',
+            'frame_pub_main = argus_base.camera:main',
         ],
     },
 )
