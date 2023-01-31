@@ -1,0 +1,270 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+    <model name='argus_v2' canonical_link='chassis'>
+        <pose relative_to='world'>0 0 0 0 0 0</pose>
+        <link name='chassis'>
+            <pose relative_to='__model__'>0 0 0.12 0 0 0</pose>
+            <inertial> <!--inertial properties of the link mass, inertia matix-->
+                <mass>0.3</mass>
+                <inertia>
+                    <ixx>0.00025</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000562</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.000812</izz>
+                </inertia>
+            </inertial>
+            <visual name='visual'>
+                <geometry>
+                    <box>
+                        <size>0.15 0.1 0.025</size>
+                    </box>
+                </geometry>
+                <!--let's add color to our link-->
+                <material>
+                    <ambient>0.0 0.0 1.0 1</ambient>
+                    <diffuse>0.0 0.0 1.0 1</diffuse>
+                    <specular>0.0 0.0 1.0 1</specular>
+                </material>
+            </visual>
+            <collision name='collision'>
+                <geometry>
+                    <box>
+                        <size>0.15 0.1 0.025</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+        <link name='left_wheel'>
+            <pose relative_to="chassis">0.03 0.06 0 -1.5707 0 0</pose>
+            <inertial>
+                <mass>0.05</mass>
+                <inertia>
+                    <ixx>0.000033</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000033</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.000062</izz>
+                </inertia>
+            </inertial>
+            <visual name='visual'>
+                <geometry>
+                    <cylinder>
+                        <radius>0.03</radius>
+                        <length>0.02</length>
+                    </cylinder>
+                </geometry>
+                <material> <!-- Wheel material -->
+                    <ambient>0.1 0.1 0.1 1</ambient>
+                    <diffuse>0.1 0.1 0.2 1</diffuse>
+                    <specular>0 0 0 0</specular>
+                    <emissive>0 0 0 1</emissive>
+                </material> <!-- End wheel material -->
+            </visual>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>0.03</radius>
+                        <length>0.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+        </link>
+        <!--The same as left wheel but with different position-->
+        <link name='right_wheel'>
+            <pose relative_to="chassis">0.03 -0.06 0 -1.5707 0 0</pose> <!--angles are in radian-->
+            <inertial>
+                <mass>0.05</mass>
+                <inertia>
+                    <ixx>0.000033</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.000033</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.000062</izz>
+                </inertia>
+            </inertial>
+            <visual name='visual'>
+                <geometry>
+                    <cylinder>
+                        <radius>0.03</radius>
+                        <length>0.02</length>
+                    </cylinder>
+                </geometry>
+                <material> <!-- Wheel material -->
+                    <ambient>0.1 0.1 0.1 1</ambient>
+                    <diffuse>0.1 0.1 0.2 1</diffuse>
+                    <specular>0 0 0 0</specular>
+                    <emissive>0 0 0 1</emissive>
+                </material> <!-- End wheel material -->
+            </visual>
+            <collision name='collision'>
+                <geometry>
+                    <cylinder>
+                        <radius>0.03</radius>
+                        <length>0.02</length>
+                    </cylinder>
+                </geometry>
+            </collision>
+        </link>
+        <!--caster wheel-->
+        <frame name="caster_frame" attached_to='chassis'>
+            <pose>-0.045 0 -0.01 0 0 0</pose>
+        </frame>
+        
+        <link name='caster'>
+            <pose relative_to='caster_frame'/>
+            <inertial>
+                <mass>0.02</mass>
+                <inertia>
+                    <ixx>0.00016</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>0.00016</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.00016</izz>
+                </inertia>
+            </inertial>
+            <visual name='visual'>
+                <geometry>
+                    <sphere>
+                        <radius>0.02</radius>
+                    </sphere>
+                </geometry>
+                <material>
+                    <ambient>0.0 1 0.0 1</ambient>
+                    <diffuse>0.0 1 0.0 1 1</diffuse>
+                    <specular>0.0 1 0.0 1</specular>
+                </material>
+            </visual>
+            <collision name='collision'>
+                <geometry>
+                    <sphere>
+                        <radius>0.02</radius>
+                    </sphere>
+                </geometry>
+            </collision>
+        </link>
+        <!--Camera-->
+        <frame name="camera_frame" attached_to='chassis'>
+            <pose>0.06 0 0.05 0 0 0</pose>
+        </frame>
+        <link name="camera">
+            <pose relative_to="camera_frame">0 0 0 0 1.0 0</pose> <!--angles are in radian-->
+            <inertial>
+                <mass>0.05</mass>
+                <inertia>
+                    <ixx>0.0000166667</ixx>
+                    <iyy>0.0000166667</iyy>
+                    <izz>0.0000166667</izz>
+                </inertia>
+            </inertial>
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>0.025 0.06 0.025</size>
+                    </box>
+                </geometry>
+            </collision>
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>0.025 0.06 0.025</size>
+                    </box>
+                </geometry>
+            </visual>
+            <sensor name="camera" type="camera">
+                <update_rate>15</update_rate>
+                <camera>
+                    <horizontal_fov>1.919</horizontal_fov>
+                    <image>
+                        <width>640</width>
+                        <height>480</height>
+                    </image>
+                    <clip>
+                        <near>0.1</near>
+                        <far>50</far>
+                    </clip>
+                </camera>
+                <always_on>1</always_on>
+                <update_rate>30</update_rate>
+                <visualize>true</visualize>
+                <topic>camera</topic>
+            </sensor>
+        </link>
+        <!--adding joints-->
+        <joint name='camera_joint' type='revolute'>
+            <pose relative_to='camera_frame'/>
+            <parent>chassis</parent>
+            <child>camera</child>
+            <axis>
+                <xyz expressed_in='__model__'>0 1 0</xyz> <!--can be defined as any frame or even arbitrary frames-->
+                <limit>
+                    <lower>-1.5</lower>    <!--negative infinity-->
+                    <upper>0.1</upper>     <!--positive infinity-->
+                </limit>
+            </axis>
+        </joint>
+
+        <joint name='left_wheel_joint' type='revolute'>
+            <pose relative_to='left_wheel'/>
+            <parent>chassis</parent>
+            <child>left_wheel</child>
+            <axis>
+                <xyz expressed_in='__model__'>0 1 0</xyz> <!--can be defined as any frame or even arbitrary frames-->
+                <limit>
+                    <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                    <upper>1.79769e+308</upper>     <!--positive infinity-->
+                </limit>
+            </axis>
+        </joint>
+        <joint name='right_wheel_joint' type='revolute'>
+            <pose relative_to='right_wheel'/>
+            <parent>chassis</parent>
+            <child>right_wheel</child>
+            <axis>
+                <xyz expressed_in='__model__'>0 1 0</xyz>
+                <limit>
+                    <lower>-1.79769e+308</lower>    <!--negative infinity-->
+                    <upper>1.79769e+308</upper>     <!--positive infinity-->
+                </limit>
+            </axis>
+        </joint>
+        <joint name='caster_wheel' type='ball'>
+            <parent>chassis</parent>
+            <child>caster</child>
+        </joint>
+        <!--Adding plugins-->
+        <plugin
+            filename="ignition-gazebo-sensors-system"
+            name="ignition::gazebo::systems::Sensors">
+        </plugin>
+        <plugin
+            filename="libignition-gazebo-diff-drive-system.so"
+            name="ignition::gazebo::systems::DiffDrive">
+            <left_joint>left_wheel_joint</left_joint>
+            <right_joint>right_wheel_joint</right_joint>
+            <wheel_separation>0.11</wheel_separation>
+            <wheel_radius>0.03</wheel_radius>
+            <!-- output -->
+            <topic>cmd_vel</topic>
+            <odom_publish_frequency>1</odom_publish_frequency>
+            <tf_topic>argus_v2/tf</tf_topic>
+            <odom_topic>odometry</odom_topic>
+        </plugin>
+        <plugin
+            filename="libignition-gazebo-joint-position-controller-system.so"
+            name="ignition::gazebo::systems::JointPositionController">
+            <topic>camera/cmd_pos</topic>
+            <joint_name>camera_joint</joint_name>
+            <cmd_max>3.14</cmd_max>
+            <cmd_min>-3.14</cmd_min>
+            <p_gain>0.01</p_gain> 
+            <i_gain>0.0001</i_gain>
+            <d_gain>0.001</d_gain>
+            <!-- output -->
+        </plugin>
+    </model>
+</sdf>
