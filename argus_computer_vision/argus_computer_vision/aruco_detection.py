@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 
 class ArUcoDetection:
@@ -63,11 +64,18 @@ class ArUcoDetection:
         
         return image
 
-
     def detect(self, frame):
         corners, ids, _ = cv2.aruco.detectMarkers(frame, self._aruco_dict, parameters=self._aruco_params)
         return corners, ids
 
+    def generate_aruco(self, id, aruco_type='DICT_4X4_1000'):
+        tag_size = int(aruco_type.split('_')[-1])
+        tag = np.zeros((tag_size, tag_size, 1), dtype="uint8")
+        cv2.aruco.drawMarker(self._aruco_dict, id, tag_size, tag, 1)
+
+        # Save the tag generated
+        tag_name = aruco_type + "_" + str(id) + ".png"
+        cv2.imwrite(tag_name, tag)
 
 
 if __name__ == '__main__':
@@ -78,3 +86,4 @@ if __name__ == '__main__':
     img = ArUcoDetection.display(img, corners, ids)
     cv2.imshow("frame", img)
     cv2.waitKey(0)
+    # detector.generate_aruco(88)

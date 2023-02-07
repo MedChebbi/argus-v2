@@ -20,6 +20,10 @@ setup(
         (os.path.join('share', package_name, "models", "platform/materials/textures/"), glob('models/platform/materials/textures/*')),
         (os.path.join('share', package_name, "models", "platform/"), glob('models/platform/*.sdf')),
         (os.path.join('share', package_name, "models", "platform/"), glob('models/platform/*.config')),
+        (os.path.join('share', package_name, "models", "robolympics_circuit/meshes/"), glob('models/robolympics_circuit/meshes/*.dae')),
+        (os.path.join('share', package_name, "models", "robolympics_circuit/materials/textures/"), glob('models/robolympics_circuit/materials/textures/*')),
+        (os.path.join('share', package_name, "models", "robolympics_circuit/"), glob('models/robolympics_circuit/*.sdf')),
+        (os.path.join('share', package_name, "models", "robolympics_circuit/"), glob('models/robolympics_circuit/*.config')),
     ],
 
     install_requires=['setuptools'],

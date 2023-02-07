@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.7">
     <model name='argus_v2' canonical_link='chassis'>
-        <pose relative_to='world'>0 0 0 0 0 0</pose>
+        <pose relative_to='world'>0.23 0.525 0 0 0 0</pose>
         <link name='chassis'>
             <pose relative_to='__model__'>0 0 0.12 0 0 0</pose>
             <inertial> <!--inertial properties of the link mass, inertia matix-->

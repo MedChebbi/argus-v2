@@ -16,7 +16,7 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare('argus_simulation'),
                 'worlds',
-                'simple_world.sdf '
+                'robolympics_world_0.sdf '
             ]),
             '--render-engine ogre2 '
         ]],
