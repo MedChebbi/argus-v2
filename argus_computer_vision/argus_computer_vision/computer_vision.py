@@ -4,7 +4,7 @@ from cv_bridge import CvBridge
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CompressedImage, Image
 
 from argus_computer_vision.color_detection import ColorDetector
 from argus_computer_vision.aruco_detection import ArUcoDetection
@@ -19,7 +19,11 @@ class ComputerVision(Node):
         self.declare_all_parameters()
         self.bridge = CvBridge()
 
-        self.frame_sub = self.create_subscription(CompressedImage, "/argus/frame_pub/frame/compressed", self.frame_callback, qos_profile_system_default)
+        self.compressed = False
+        if self.compressed:
+            self.frame_sub = self.create_subscription(CompressedImage, "/argus/frame_pub/cam_frame/compressed", self.frame_callback, qos_profile_system_default)
+        else:
+            self.frame_sub = self.create_subscription(Image, "/argus/frame_pub/cam_frame", self.frame_callback, qos_profile_system_default)
         # self.feedback_pub  = self.create_publisher(MultiWeedDetectDebug, "~/feedback", qos_profile_sensor_data)
 
         self.classifier = LineStateClassifier(self.get_logger())
@@ -36,7 +40,10 @@ class ComputerVision(Node):
 
     def frame_callback(self, frame):
         msgs = 'hello'
-        cv_frame = self.bridge.compressed_imgmsg_to_cv2(frame, desired_encoding='passthrough')
+        if self.compressed:
+            cv_frame = self.bridge.compressed_imgmsg_to_cv2(frame, desired_encoding='passthrough')
+        else:
+            cv_frame = self.bridge.imgmsg_to_cv2(frame, desired_encoding='passthrough')
         self.__publish_main_topics(msgs)
 
     def declare_all_parameters(self):

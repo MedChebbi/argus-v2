@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'teleop_keyboard = argus_teleop.teleop_keyboard:main'
         ],
     },
 )

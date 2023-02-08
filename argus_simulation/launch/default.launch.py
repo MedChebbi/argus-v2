@@ -26,17 +26,17 @@ def generate_launch_description():
     bridge_cmd_vel = Node(
         package='ros_ign_bridge',
         executable='parameter_bridge',
-        arguments=['/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist'],
+        arguments=['/argus/cmd_vel@geometry_msgs/msg/Twist@ignition.msgs.Twist'],
     )
     bridge_camera_cmd_pos = Node(
         package='ros_ign_bridge',
         executable='parameter_bridge',
-        arguments=['/camera/cmd_pos@std_msgs/msg/Float64@ignition.msgs.Double'],
+        arguments=['/argus/camera/cmd_pos@std_msgs/msg/Float64@ignition.msgs.Double'],
     )
     bridge_camera = Node(
         package='ros_ign_bridge',
         executable='parameter_bridge',
-        arguments=['/camera@sensor_msgs/msg/Image@ignition.msgs.Image'],
+        arguments=['/argus/frame_pub/cam_frame@sensor_msgs/msg/Image@ignition.msgs.Image'],
     )
     return launch.LaunchDescription([
         gazebo,

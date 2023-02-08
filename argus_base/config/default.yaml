@@ -1,0 +1,8 @@
+argus:
+  frame_pub:
+    ros__parameters:
+      compressed: False
+      rate: 15
+      resolution: 1 # 0: 320×240, 1: 640x480, 2: 1280×720, 3: 1920×1080
+      brightness: 0
+      sharpness: 50

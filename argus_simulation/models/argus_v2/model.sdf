@@ -191,7 +191,7 @@
                 <always_on>1</always_on>
                 <update_rate>30</update_rate>
                 <visualize>true</visualize>
-                <topic>camera</topic>
+                <topic>argus/frame_pub/cam_frame</topic>
             </sensor>
         </link>
         <!--adding joints-->
@@ -249,15 +249,15 @@
             <wheel_separation>0.11</wheel_separation>
             <wheel_radius>0.03</wheel_radius>
             <!-- output -->
-            <topic>cmd_vel</topic>
+            <topic>argus/cmd_vel</topic>
             <odom_publish_frequency>1</odom_publish_frequency>
             <tf_topic>argus_v2/tf</tf_topic>
-            <odom_topic>odometry</odom_topic>
+            <odom_topic>argus/odometry</odom_topic>
         </plugin>
         <plugin
             filename="libignition-gazebo-joint-position-controller-system.so"
             name="ignition::gazebo::systems::JointPositionController">
-            <topic>camera/cmd_pos</topic>
+            <topic>argus/camera/cmd_pos</topic>
             <joint_name>camera_joint</joint_name>
             <cmd_max>3.14</cmd_max>
             <cmd_min>-3.14</cmd_min>
