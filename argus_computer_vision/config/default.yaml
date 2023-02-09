@@ -2,6 +2,13 @@ argus:
   computer_vision:
     ros__parameters:
       line_detection:
+        color_space:
+        mode: 
+        min_range:
+        max_range:
+        max_area:
+        min_area:
+        
         
 
       state_classification:

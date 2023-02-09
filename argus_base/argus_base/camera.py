@@ -12,8 +12,9 @@ from rclpy.qos import qos_profile_sensor_data, qos_profile_system_default
 class Resolution(IntEnum):
     LOW_240p = 0 # 320×240
     VGA_480p = 1 # 640x480
-    HD_720p = 2 # 1280×720
-    FULL_HD_1080p = 3 # 1920×1080
+    VGA_WIDE_480p = 2 # 864x480
+    HD_720p = 3 # 1280×720
+    FULL_HD_1080p = 4 # 1920×1080
 
 class FramePub(Node):
 
@@ -31,7 +32,7 @@ class FramePub(Node):
             self.frame_msg = CompressedImage()
             self.image_pub_ = self.create_publisher(CompressedImage,
                                                     "~/cam_frame/compressed",
-                                                    self.custom_qos)
+                                                    qos_profile_system_default)
         else:
             self.frame_msg = Image()
             self.image_pub_ = self.create_publisher(Image,
@@ -40,16 +41,21 @@ class FramePub(Node):
 
         self._timer = self.create_timer(1.0 / self.get_parameter("rate").value, self.timer_callback)
         self.bridge = CvBridge()
-        self.cap = cv2.VideoCapture(0)
-        self.configure_cam()
-        self.add_on_set_parameters_callback(self.configure_cam)
+        try:
+            self.cap = cv2.VideoCapture(0)
+            self.configure_cam()
+            self.add_on_set_parameters_callback(self.configure_cam)
+        except Exception as e:
+            self.get_logger().error(f"Failed to connect to camera {e}")
+
 
     def timer_callback(self):
         """
         """
         if (self.cap.isOpened()):
             ret, frame = self.cap.read()
-            if ret:    
+            if ret:
+                # self.get_logger().info(f"frame shape: {frame.shape}")
                 if self.use_compressed:
                     self.frame_msg = self.bridge.cv2_to_compressed_imgmsg(frame, dst_format='jpg')
                 else:
@@ -65,9 +71,13 @@ class FramePub(Node):
     def declare_all_parameters(self):
         self.declare_parameter("compressed", True)
         self.declare_parameter("rate", 15)
-        self.declare_parameter("resolution", 1)
+        self.declare_parameter("resolution", 2)
         self.declare_parameter("brightness", 50)
         self.declare_parameter("sharpness", 50)
+        self.declare_parameter("saturation", 50)
+        self.declare_parameter("auto_exposure", 1)
+        self.declare_parameter("exposure", 400)
+        self.declare_parameter("gain", 50)
         
     def configure_resolution(self, resolution):
         
@@ -75,6 +85,8 @@ class FramePub(Node):
             width, height = 320, 240
         elif resolution == Resolution.VGA_480p:
             width, height = 640, 480
+        elif resolution == Resolution.VGA_WIDE_480p:
+            width, height = 864, 480
         elif resolution == Resolution.HD_720p:
             width, height = 1280, 720
         elif resolution == Resolution.FULL_HD_1080p:
@@ -84,13 +96,16 @@ class FramePub(Node):
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     
     def configure_cam(self, params=None):
-        if params is not None:
-            params_of_interest = {
+        params_of_interest = {
                 "resolution": None,
                 "brightness": cv2.CAP_PROP_BRIGHTNESS,
                 "sharpness": cv2.CAP_PROP_SHARPNESS,
+                "saturation": cv2.CAP_PROP_SATURATION,
+                "auto_exposure": cv2.CAP_PROP_AUTO_EXPOSURE,
+                "exposure": cv2.CAP_PROP_EXPOSURE,
+                "gain": cv2.CAP_PROP_GAIN,
             }
-
+        if params is not None:
             for param in params:
                 if param.name in params_of_interest.keys():
                     if params_of_interest[param.name] is None:
@@ -103,22 +118,22 @@ class FramePub(Node):
             return SetParametersResult(successful=True)
 
         else:
-            resolution = self.get_parameter('resolution').value
-            brightness = self.get_parameter('brightness').value
-            sharpness = self.get_parameter('sharpness').value
-            self.configure_resolution(resolution)
-            self.get_logger().info(f"camera-control: resolution is set to: {Resolution(resolution).name}")
-            self.get_logger().info(f"camera-control: brightness is set to: {brightness}")
-            self.get_logger().info(f"camera-control: sharpness is set to: {sharpness}")
-
-            self.cap.set(cv2.CAP_PROP_BRIGHTNESS, brightness)
-            self.cap.set(cv2.CAP_PROP_SHARPNESS, sharpness)
+            for k, v in params_of_interest.items():
+                if k == 'resolution':
+                    resolution = self.get_parameter(k).value
+                    self.configure_resolution(resolution)
+                    self.get_logger().info(f"camera-control: resolution is set to: {Resolution(resolution).name}")
+                else:
+                    val = self.get_parameter(k).value
+                    self.get_logger().info(f"camera-control: {k} is set to: {val}")
+                    self.cap.set(v, val)
         
 
 def main(args=None):
     rclpy.init(args=args)
     frame_pub = FramePub()
     rclpy.spin(frame_pub)
+    frame_pub.cap.release()
     frame_pub.destroy_node()
     rclpy.shutdown()
 
