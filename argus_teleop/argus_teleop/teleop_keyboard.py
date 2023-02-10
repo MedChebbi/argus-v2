@@ -154,6 +154,7 @@ def main():
     pub = node.create_publisher(geometry_msgs.msg.Twist, '/argus/cmd_vel', 10)
     camera_pos_pub = node.create_publisher(std_msgs.msg.Float64, '/argus/camera/cmd_pos', 2)
 
+    camera_pos = 0.0
     speed = 0.3
     turn = 1.0
     control_linear_velocity = 0.0
