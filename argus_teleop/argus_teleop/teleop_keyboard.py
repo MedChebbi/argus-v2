@@ -59,6 +59,7 @@ i/k : increase/decrease only linear speed by 10%
 o/l : increase/decrease only angular speed by 10%
 
 b/n : upper/lower camera orientation
+m : To switch between manual mode and auto steer mode.
 
 CTRL-C to quit
 """
@@ -71,7 +72,7 @@ ANG_VEL_STEP_SIZE = 0.1
 
 # Camera orientation in rad
 CAM_POS_UP = -1.0
-CAM_POS_DOWN = 0.5
+CAM_POS_DOWN = 1.0
 
 moveBindings = {
     'z': (1, 0, 0, 0),
@@ -153,7 +154,9 @@ def main():
     node = rclpy.create_node('teleop_keyboard')
     pub = node.create_publisher(geometry_msgs.msg.Twist, '/argus/cmd_vel', 10)
     camera_pos_pub = node.create_publisher(std_msgs.msg.Float64, '/argus/camera/cmd_pos', 2)
+    auto_steer_pub = node.create_publisher(std_msgs.msg.Bool, '/argus/cmd_auto_steer', 2)
 
+    auto_steer = False
     camera_pos = 0.0
     speed = 0.3
     turn = 1.0
@@ -174,7 +177,6 @@ def main():
             elif key in speedBindings.keys():
                 speed = check_linear_limit_velocity(speed * speedBindings[key][0])
                 turn = check_angular_limit_velocity(turn * speedBindings[key][1])
-
                 print(vels(speed, turn))
                 if (status == 14):
                     print(msg)
@@ -184,6 +186,9 @@ def main():
                 th = 0.0
                 control_linear_velocity = 0.0
                 control_angular_velocity = 0.0
+            elif key == 'm':
+                auto_steer = not auto_steer
+                print(f" Auto steer mode: {auto_steer}")
             elif key == 'b':
                 camera_pos = CAM_POS_UP
             elif key == 'n':
@@ -214,6 +219,10 @@ def main():
             camera_pos_msg = std_msgs.msg.Float64()
             camera_pos_msg.data = camera_pos
             camera_pos_pub.publish(camera_pos_msg)
+
+            auto_steer_msg = std_msgs.msg.Bool()
+            auto_steer_msg.data = auto_steer
+            auto_steer_pub.publish(auto_steer_msg)
 
     except Exception as e:
         print(e)

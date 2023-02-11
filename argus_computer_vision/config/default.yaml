@@ -1,17 +1,31 @@
 argus:
   computer_vision:
     ros__parameters:
-      line_detection:
-        color_space:
-        mode: 
-        min_range:
-        max_range:
-        max_area:
-        min_area:
-        
-        
 
-      state_classification:
+      cv_debug: True
+
+      line_detection:
+        color_space: 0 # 0: BGR, 1: HSV, 2: LAB
+        color_min_range: [0, 0, 0]
+        color_max_range: [25, 25, 25]
+        max_area: 0.25 # Ratio of total area of frame
+        min_area: 0.01 # Ratio of total area of frame
+
+      line_state_classification:
+        activated: False
+        on_edge: True
         model_path: ""
+        input_shape: [64, 64, 1]
+        class_names: ['straight', 'x', 'T', 'left', 'right', 'end']
+        threshold: 0.65
+        queue_size: 5
 
       aruco_detection:
+        aruco_type: 'DICT_4X4_1000'
+
+      color_blob_detection:
+        color_space: 0 # 0: BGR, 1: HSV, 2: LAB
+        color_min_range: [0, 0, 0]
+        color_max_range: [25, 25, 25]
+        max_area: 0.1 # Ratio of total area of frame
+        min_area: 0.01 # Ratio of total area of frame
