@@ -21,9 +21,9 @@ argus:
       aruco_detection:
         aruco_type: 'DICT_4X4_1000'
 
-      color_blob_detection:
-        color_space: 0 # 0: BGR, 1: HSV, 2: LAB
-        color_min_range: [0, 0, 0]
-        color_max_range: [25, 25, 25]
-        max_area: 0.1 # Ratio of total area of frame
-        min_area: 0.01 # Ratio of total area of frame
+      # color_blob_detection:
+      #   color_space: 0 # 0: BGR, 1: HSV, 2: LAB
+      #   color_min_range: [0, 0, 0]
+      #   color_max_range: [25, 25, 25]
+      #   max_area: 0.1 # Ratio of total area of frame
+      #   min_area: 0.01 # Ratio of total area of frame
