@@ -22,17 +22,18 @@ class Display:
         return debug_frame
 
     @staticmethod
-    def display_blob(image, bolb_detector):
-        return image
+    def display_blob(debug_frame, bolb_detector):
+        return debug_frame
 
     @staticmethod
-    def display_line_state(image, state):
-        return image
+    def display_line_state(debug_frame, state):
+        if state != '':
+            cv2.putText(debug_frame,"State: "+str(state),(10, 80), cv2.FONT_HERSHEY_SIMPLEX, 1, Color.RED, 2)
+        return debug_frame
 
     @staticmethod
     def display_aruco_markers(image, corners, ids):
         if len(corners) > 0:
-            ids = ids.flatten()
             for (marker_corner, marker_id) in zip(corners, ids):
         
                 corners = marker_corner.reshape((4, 2))

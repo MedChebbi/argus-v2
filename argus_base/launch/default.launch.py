@@ -16,7 +16,6 @@ def generate_launch_description():
     ld = launch.LaunchDescription()
     params_file = yaml.safe_load(params_file)
     os.environ['RCUTILS_CONSOLE_OUTPUT_FORMAT'] = '[{time}] [{severity}] [{name}] - {message}'
-    ld = launch.LaunchDescription()
     node = Node(
         package='argus_base',
         executable='frame_pub_main',

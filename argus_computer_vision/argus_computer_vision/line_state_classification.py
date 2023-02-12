@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 from queue import Queue
@@ -12,25 +13,28 @@ class LineStateClassifier:
         
         self._class_names = params['class_names']
 
-        self._input_shape = params['input_shape']
         self._threshold = params['threshold']
         self._pred_q = Queue(maxsize = params['queue_size'])
         if params['on_edge']:
             import tflite_runtime.interpreter as tflite
-            self.interpreter = tflite.Interpreter(model_path=params['model_path'])
+            self.interpreter = tflite.Interpreter(model_path=os.path.expanduser(params['model_path']))
         else:
             import tensorflow as tf
-            self.interpreter = tf.lite.Interpreter(model_path=params['model_path'])
+            self.interpreter = tf.lite.Interpreter(model_path=os.path.expanduser(params['model_path']))
         self.interpreter.allocate_tensors()
 
-    @staticmethod
-    def preprocess(gray_img, input_shape):
-        img = cv2.resize(gray_img, (input_shape[0],input_shape[1]))
-        img = np.array(np.reshape(img,input_shape),
-                                  dtype=np.uint8)
-        if input_shape[2]==3:
-            img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
-        out_img = (np.expand_dims(img, axis = 0))
+    def preprocess(self, img, input_shape):
+        """
+        """
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        gray = cv2.GaussianBlur(gray, (7, 7), 1)
+        _, thr = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)
+        # cv2.imshow("thr", thr)
+        # cv2.waitKey(10)
+        out_img = cv2.resize(thr, (input_shape[1], input_shape[2]))
+        out_img = np.array(np.reshape(out_img, input_shape), dtype=np.float32)
+        # if input_shape[2]==3:
+        #     img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
         out_img = out_img/255.
         return out_img
 
@@ -40,12 +44,9 @@ class LineStateClassifier:
         output_details = self.interpreter.get_output_details()
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
-        #set random np array to test
-        #input_data = np.array(np.random.random_sample(input_shape), dtype=np.float32)
-        preprocessed_image = self.preprocess(image, self._input_shape)
-        input_data = np.array(preprocessed_image, dtype=np.float32)
+        # self._logger.info(f"model input details: {input_details}")
+        input_data = self.preprocess(image, input_shape)
         self.interpreter.set_tensor(input_details[0]['index'], input_data)
-
         self.interpreter.invoke()
 
         # The function `get_tensor()` returns a copy of the tensor data.
@@ -66,9 +67,9 @@ class LineStateClassifier:
         else:
             pred_class = 'Low accuracy'
         if debug:
-            self._logger.info("current queue size" ,self._pred_q.qsize())
-            self._logger.info('logits: ' ,output_data[0])
-            self._logger.info('The predicted class is:', pred_class)
+            self._logger.info(f'current queue size {self._pred_q.qsize()}')
+            self._logger.debug(f'logits: {output_data[0]}')
+            self._logger.info(f'The predicted class is: {pred_class}')
         return pred_class, output_data[0]
 
 if __name__ == '__main__':

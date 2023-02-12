@@ -80,7 +80,6 @@ class ColorDetector:
         """
         height, width = frame.shape[:2]
         frame_area = height * width
-        print(f"frame area: {frame_area}")
         setpoint = width * self.SETPOINT_RATIO
         roi = frame.copy()
         if self._x_last is None or self._y_last is None:
@@ -109,10 +108,8 @@ class ColorDetector:
             area = cv2.contourArea(i)
             areas.append(area)
         max_area = max(areas) / frame_area
-        print(f"Max area: {max_area}")
 
         if contours_len > 0 and (self._min_area_thre < max_area < self._max_area_thre):
-            self._logger.info(f"[{self._detection_mode.name}]: Detected")
             if self._detection_mode == Mode.LINE:
                 self._box, error, ang = self.__detect_line(contours, setpoint, width, height)
             else:
@@ -124,7 +121,7 @@ class ColorDetector:
 
         else :
             self._blob_detected = False
-            self._error = 0
+            self._error = 0.0
             self._ang = 0
             self._box = []
         
@@ -210,105 +207,3 @@ class ColorDetector:
         error = (self._x_last - setpoint) / width
         
         return [x, y, w, h], error, ang
-
-
-
-
-
-    # def detect(self, frame, debug_frame, params=None, draw = False):
-        
-    #     needed_info = []
-    #     self.WIDTH = frame.shape[1]
-    #     self.HEIGHT = frame.shape[0]
-    #     setpoint = self.WIDTH//2
-
-    #     self._x_last = self.WIDTH//2
-    #     self._y_last = self.HEIGHT//2
-
-    #     roi = frame.copy()
-    #     if self._detection_mode == Mode.LINE:
-    #         self._max_area_thre = params["MAX_AREA"]
-    #         self._min_area_thre = params["MIN_AREA"]
-    #         thres = params["THRES"]
-    #         self._max_values = np.array([thres,thres,thres])
-    #         self._roi_mask = int(self.HEIGHT/2)
-    #         roi[:self._roi_mask,:] = Color.WHITE      # (B, G, R)
-
-    #     blurred_frame = cv2.GaussianBlur(roi,(5,5),1)
-    #     if self._color_space == ColorSpace.HSV:
-    #         processed_frame = cv2.cvtColor(blurred_frame, cv2.COLOR_BGR2HSV)
-    #     elif self._color_space == ColorSpace.BGR:
-    #         processed_frame = blurred_frame
-    #     elif self._color_space == ColorSpace.LAB:
-    #         processed_frame = cv2.cvtColor(blurred_frame, cv2.COLOR_BGR2LAB)
-
-    #     mask = cv2.inRange(processed_frame, self._min_values, self._max_values)
-    #     kernel = np.ones((3,3), np.uint8)
-    #     mask = cv2.erode(mask, kernel, iterations=2)
-    #     mask = cv2.dilate(mask, kernel, iterations=2) #we used those filters to smooth the mask for a better detection
-
-    #     contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    #     contours_len = len(contours)
-    #     areas = [0]
-    #     for i in contours:
-    #         area = cv2.contourArea(i)
-    #         areas.append(area)
-    #     max_area = max(areas)
-        
-    #     if contours_len > 0 and (self._min_area_thre < max_area < self._max_area_thre):
-    #         self._blob_detected = True
-            
-
-    #         if self._detection_mode == Mode.LINE:
-    #             box = self.__detect_black(contours, setpoint)
-    #             centertext = "Offset: " + str(self._error)
-    #             if draw:
-    #                 cv2.drawContours(debug_frame,[box],0,(0,0,255),3)
-    #                 cv2.putText(debug_frame,"Angle: "+str(self._ang),(10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, self.RED, 2)
-    #                 cv2.drawContours(debug_frame, contours, -1, self.GREEN, 3)
-    #                 cv2.putText(debug_frame, centertext, (200,340), cv2.FONT_HERSHEY_SIMPLEX, 1, self.RED,2)
-    #                 cv2.circle(debug_frame, (self.WIDTH//2, self.HEIGHT//2),5, self.BLUE,cv2.FILLED)
-    #                 cv2.line(debug_frame, (int(self._x_last), 200), (int(self._x_last), 250),self.BLUE,3)
-            
-    #         else:
-    #             new_areas = []
-    #             #print("[INFO] Color mode")
-                
-    #             if contours_len == 1:
-    #                 x,y,w,h = cv2.boundingRect(contours[0])
-    #             else:
-    #                 y_max = 0
-    #                 for j, cont in enumerate(contours):
-    #                     area = cv2.contourArea(cont)
-    #                     new_areas.append(area)
-    #                     new_max_area = max(new_areas)
-    #                     x,y,w,h = cv2.boundingRect(cont)
-    #                     if y > y_max:
-    #                         y_max = y
-    #                         j_max = j
-                        
-    #                 # print("y_max: ",y_max)
-    #                 # print(areas.index(j_max))
-    #                 lowest_contour = contours[j_max]
-    #                 biggest_contour = contours[new_areas.index(new_max_area)]
-    #                 x,y,w,h = cv2.boundingRect(lowest_contour)
-                
-    #             self._x_last = x + (w//2)
-    #             self._y_last = y + (h//2)
-    #             self._error = int(self._x_last - setpoint)
-    #             centertext = "Offset: " + str(self._error)
-    #             if draw:
-    #                 #cv2.drawContours(debug_frame,lowest_contour,-1, self.GREEN,3)
-    #                 cv2.rectangle(debug_frame, (x,y), (x+w,y+h), self.GREEN,2)
-    #                 cv2.putText(debug_frame, centertext, (200,340), cv2.FONT_HERSHEY_SIMPLEX, 1, self.RED,2)
-    #                 cv2.circle(debug_frame, (self.WIDTH//2, self.HEIGHT//2),5, self.BLUE,cv2.FILLED)
-    #                 cv2.line(debug_frame, (int(self._x_last), 200), (int(self._x_last), 250),self.BLUE,3)
-                
-    #     else :
-    #         self._blob_detected = False
-            
-    #     needed_info.append(self._blob_detected)
-    #     needed_info.append(self._error)
-    #     needed_info.append(self._ang)
-
-    #     return debug_frame, mask, needed_info

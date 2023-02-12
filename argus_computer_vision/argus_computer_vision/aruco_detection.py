@@ -36,8 +36,11 @@ class ArUcoDetection:
 
     def detect(self, frame, debug=False):
         corners, ids, _ = cv2.aruco.detectMarkers(frame, self._aruco_dict, parameters=self._aruco_params)
-        if debug and len(corners):
-            self._logger.info(f"[Aruco Detector] Marker IDs: {ids}")
+        if len(corners):
+            ids = ids.flatten()
+            if debug:
+                self._logger.info(f"[Aruco Detector] Marker IDs: {ids}")
+
         return corners, ids
 
     def generate_aruco(self, id, aruco_type='DICT_4X4_1000'):
