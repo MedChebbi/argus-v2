@@ -38,9 +38,15 @@ def generate_launch_description():
         executable='parameter_bridge',
         arguments=['/argus/frame_pub/cam_frame@sensor_msgs/msg/Image@ignition.msgs.Image'],
     )
+    bridge_odom = Node(
+        package='ros_ign_bridge',
+        executable='parameter_bridge',
+        arguments=['/argus/odometry@nav_msgs/msg/Odometry@ignition.msgs.Odometry'],
+    )
     return launch.LaunchDescription([
         gazebo,
         bridge_cmd_vel,
         bridge_camera,
-        bridge_camera_cmd_pos
+        bridge_camera_cmd_pos,
+        bridge_odom
     ])

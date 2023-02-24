@@ -42,7 +42,7 @@ class FramePub(Node):
         self._timer = self.create_timer(1.0 / self.get_parameter("rate").value, self.timer_callback)
         self.bridge = CvBridge()
         try:
-            self.cap = cv2.VideoCapture(0)
+            self.cap = cv2.VideoCapture(2)
             self.configure_cam()
             self.add_on_set_parameters_callback(self.configure_cam)
         except Exception as e:

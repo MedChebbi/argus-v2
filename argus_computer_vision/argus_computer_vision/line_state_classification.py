@@ -23,29 +23,26 @@ class LineStateClassifier:
             self.interpreter = tf.lite.Interpreter(model_path=os.path.expanduser(params['model_path']))
         self.interpreter.allocate_tensors()
 
-    def preprocess(self, img, input_shape):
+
+    def preprocess(self, mask, input_shape):
         """
         """
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (7, 7), 1)
-        _, thr = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)
-        # cv2.imshow("thr", thr)
+        mask = cv2.bitwise_not(mask)
+        # cv2.imshow("thr", mask)
         # cv2.waitKey(10)
-        out_img = cv2.resize(thr, (input_shape[1], input_shape[2]))
+        out_img = cv2.resize(mask, (input_shape[1], input_shape[2]))
         out_img = np.array(np.reshape(out_img, input_shape), dtype=np.float32)
-        # if input_shape[2]==3:
-        #     img = cv2.cvtColor(img,cv2.COLOR_GRAY2BGR)
-        out_img = out_img/255.
+        out_img = out_img / 255.
         return out_img
 
-    def predict(self, image, debug=False):
+    def predict(self, mask, debug=False):
          # Get input and output tensors.
         input_details = self.interpreter.get_input_details()
         output_details = self.interpreter.get_output_details()
         # Test the model on random input data.
         input_shape = input_details[0]['shape']
         # self._logger.info(f"model input details: {input_details}")
-        input_data = self.preprocess(image, input_shape)
+        input_data = self.preprocess(mask, input_shape)
         self.interpreter.set_tensor(input_details[0]['index'], input_data)
         self.interpreter.invoke()
 

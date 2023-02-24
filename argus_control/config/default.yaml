@@ -1,0 +1,9 @@
+argus:
+  controller:
+    ros__parameters:
+      S: 0.15
+      KP: 2.6
+      KI: 0.0
+      KD: 0.3
+      bias: 0.05
+      max_ang_speed: 3.0

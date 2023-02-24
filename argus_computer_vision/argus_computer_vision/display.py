@@ -1,3 +1,4 @@
+import numpy as np
 import cv2
 
 from argus_computer_vision.utils import Color
@@ -14,7 +15,7 @@ class Display:
         centertext = f"Offset: {error:.3f}"
         if len(box):
             cv2.drawContours(debug_frame, [box],0, Color.RED,3)
-            cv2.putText(debug_frame,"Angle: "+str(ang),(10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, Color.RED, 2)
+            cv2.putText(debug_frame,f"Angle: {ang}",(10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, Color.RED, 2)
             cv2.drawContours(debug_frame, contours, -1, Color.GREEN, 3)
             cv2.putText(debug_frame, centertext, (200,340), cv2.FONT_HERSHEY_SIMPLEX, 1, Color.RED,2)
             cv2.circle(debug_frame, (width // 2, height // 2), 5, Color.BLUE, cv2.FILLED)

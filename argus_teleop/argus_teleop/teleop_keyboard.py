@@ -152,7 +152,7 @@ def main():
     rclpy.init()
 
     node = rclpy.create_node('teleop_keyboard')
-    pub = node.create_publisher(geometry_msgs.msg.Twist, '/argus/cmd_vel', 10)
+    pub = node.create_publisher(geometry_msgs.msg.Twist, '/argus/teleop_keyboard/cmd_vel', 10)
     camera_pos_pub = node.create_publisher(std_msgs.msg.Float64, '/argus/camera/cmd_pos', 2)
     auto_steer_pub = node.create_publisher(std_msgs.msg.Bool, '/argus/cmd_auto_steer', 2)
 

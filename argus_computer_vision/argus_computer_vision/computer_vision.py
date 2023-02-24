@@ -45,6 +45,7 @@ class ComputerVision(Node):
                             'line_detection.color_max_range': self.get_parameter('line_detection.color_max_range').value,
                             'line_detection.color_min_range': self.get_parameter('line_detection.color_min_range').value,
                             'line_state_classification.activated': self.get_parameter('line_state_classification.activated').value,
+                            'line_detection.thr': self.get_parameter('line_detection.thr').value,
                             }
 
         self.line_detector = ColorDetector(self.get_logger(), {
@@ -85,7 +86,7 @@ class ComputerVision(Node):
 
         detected, error, ang = self.line_detector.detect(cv_frame, params=self.get_line_params(self.dynamic_params), debug=True)
         if self.dynamic_params["line_state_classification.activated"]:
-            line_state, _ = self.classifier.predict(cv_frame, debug=True)
+            line_state, _ = self.classifier.predict(self.line_detector.mask, debug=True)
         corners, self._aruco_ids = self.aruco_detector.detect(cv_frame, debug=True)
         
         if self.dynamic_params["cv_debug"]:
@@ -145,9 +146,10 @@ class ComputerVision(Node):
         # Line detection parameters
         self.declare_parameter("line_detection.color_space", 0)
         self.declare_parameter("line_detection.color_min_range", [0, 0, 0])
-        self.declare_parameter("line_detection.color_max_range", [25, 25, 25])
+        self.declare_parameter("line_detection.color_max_range", [80, 80, 80])
         self.declare_parameter("line_detection.max_area", 0.4)
         self.declare_parameter("line_detection.min_area", 0.01)
+        self.declare_parameter("line_detection.thr", 50)
 
         # Line state classification parameters
         self.declare_parameter("line_state_classification.activated",  False)
